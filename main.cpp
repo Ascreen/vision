@@ -225,7 +225,7 @@ using namespace cv;
 using std::cout;
 
 int main () {
-    VideoCapture cap("testing.h264");
+    VideoCapture cap("dl003.h264");
     Mat frame2;
     Mat3b frame;
 
