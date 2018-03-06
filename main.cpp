@@ -231,7 +231,7 @@ int main () {
 
 	while(cap.read(frame)&cap.read(frame2)){
 
-		/* THRESHOLD ON HSV*/
+		// THRESHOLD ON HSV
 		cvtColor(frame, frame, CV_BGR2HSV);
 		GaussianBlur(frame, frame, Size(7,7), 1, 1);
 		for(int r=0; r<frame.rows; ++r){
@@ -241,7 +241,7 @@ int main () {
 				else for(int i=0; i<3; ++i)	frame(r,c)[i] = 0;
 		}
 
-		/* BGR CONVERSION AND THRESHOLD */
+		// BGR CONVERSION AND THRESHOLD
 		Mat1b frame_gray;
 		cvtColor(frame, frame, CV_HSV2BGR);
 		cvtColor(frame, frame_gray, CV_BGR2GRAY);
