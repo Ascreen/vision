@@ -510,13 +510,14 @@ Mat GetSkin(Mat const &src) {
     return dst;
 }
 
+
 int main()
 {
 	Mat tmpImg, handImg, mask;
 	std::vector<std::vector<Point> > contours;
 	std::vector<Vec4i> hierarchy;
 
-    VideoCapture video("C:/Users/macbook/Desktop/record/dr002.h264");
+    VideoCapture video("C:/Users/macbook/Desktop/record/dr005.h264"); //dl005 dr002
 	//VideoCapture video("dl003.h264");
     Mat image;
 
@@ -534,7 +535,7 @@ int main()
 
 		mask = handImg.clone();
 
-		findContours(mask, contours, hierarchy, CV_RETR_LIST, CV_CLOCKWISE, Point(0,0));
+		findContours(mask, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_TC89_L1, Point(0,0));
 
 		int largestContour = 0;
 		for (int i = 0; i < contours.size(); i++) {
@@ -545,12 +546,44 @@ int main()
 
 		drawContours(image, contours, largestContour, Scalar(0, 255, 255), 1, 8, std::vector <Vec4i>(), 0, Point());	//YELLOW contour 그리기
 
+
+
+
+
+            // loop through the contours/hierarchy
+            for (int i=0; i<contours.size(); i++) {
+                if (hierarchy[i][3]==-1 && arcLength(contours[i], true)!=arcLength(contours[i], false)) {
+                    std::vector<std::vector<Point> >hull(1);
+                    convexHull(Mat(contours[i]), hull[0], false);
+                    drawContours(image, hull, 0, Scalar(0, 255, 0), 1, 8, std::vector<Vec4i>(), 0, Point());		//GREEN 점 잇기
+                    if(1){
+                        std::vector<RotatedRect> minRect( contours.size() );
+                        minRect[i] = minAreaRect( Mat(contours[i]) );
+                        Point2f rect_points[4];
+                        minRect[i].points( rect_points );
+                        for( int j = 0; j < 4; j++ )
+                            line( image, rect_points[j], rect_points[(j+1)%4], Scalar(255, 0, 0), 1, 8 );   //BLUE 사각형 그리기
+                    }
+                }
+            }
+
+
+
+
+		/*
 		if (!contours.empty()) {
 			std::vector<std::vector<Point> >hull(1);
 
 			convexHull(Mat(contours[largestContour]), hull[0], false);
 			drawContours(image, hull, 0, Scalar(0, 255, 0), 1, 8, std::vector<Vec4i>(), 0, Point());		//GREEN 점 잇기
 		}
+		*/
+
+
+        //Size(960,540) , Size(800,450) , Size(720,405)
+		resize(image, image, Size(960,540), 0, 0, CV_INTER_LINEAR);
+		resize(tmpImg, tmpImg, Size(720,405), 0, 0, CV_INTER_LINEAR);
+        resize(handImg, handImg, Size(720,405), 0, 0, CV_INTER_LINEAR);
 
 		imshow("hand1_image", tmpImg);
 		imshow("hand2_image", handImg);
