@@ -107,7 +107,7 @@ class WatershedSegmenter{
 
   void setMarkers(const cv::Mat& markerImage) {
 
-    markerImage.convertTo(markers, CV_32S); //32∫Ò∆Æ∏∂ƒøΩ∫∑Œ¿⁄∑·«¸∫Ø»Ø
+    markerImage.convertTo(markers, CV_32S); //32ÎπÑÌä∏ÎßàÏª§Ïä§Î°úÏûêÎ£åÌòïÎ≥ÄÌôò
 
   }
 
@@ -115,7 +115,7 @@ class WatershedSegmenter{
 
     cv::watershed(image, markers);
 
-    //∫–«“∞·∞˙∏¶markersø°¿˙¿Â
+    //Î∂ÑÌï†Í≤∞Í≥ºÎ•ºmarkersÏóêÏ†ÄÏû•
 
     return markers;
 
@@ -150,24 +150,24 @@ int main(){
         capture.read(frame);
 
         cv::Mat image = cv::imread("hand.jpg");
-        cv::imshow("Original Image", frame); //ø¯∫ª
+        cv::imshow("Original Image", frame); //ÏõêÎ≥∏
         cv::Mat gray_image;
 
         cv::cvtColor(frame,gray_image,CV_BGR2GRAY);
 
-        cv::imshow("Gray Image", gray_image); //grayøµªÛ
+        cv::imshow("Gray Image", gray_image); //grayÏòÅÏÉÅ
 
         cv::Mat binary_image;
 
         cv::threshold(gray_image,binary_image,90,255, cv::THRESH_BINARY_INV);
 
-        cv::imshow("Binary Image", binary_image); //¿Ã¡¯øµªÛ¿∏∑Œ∫Ø»Ø(º’«œæÈ∞‘≤˚inverse)
+        cv::imshow("Binary Image", binary_image); //Ïù¥ÏßÑÏòÅÏÉÅÏúºÎ°úÎ≥ÄÌôò(ÏÜêÌïòÏñóÍ≤åÎÅîinverse)
 
 
 
         cv::Mat fg;
 
-        cv::erode(binary_image, fg, cv::Mat(), cv::Point(-1,-1), 12); //ƒßΩƒ
+        cv::erode(binary_image, fg, cv::Mat(), cv::Point(-1,-1), 12); //Ïπ®Ïãù
 
         cv::imshow("Foreground", fg);
 
@@ -175,11 +175,11 @@ int main(){
 
         cv::Mat bg;
 
-        cv::dilate(binary_image, bg, cv::Mat(), cv::Point(-1,-1), 40); //∆ÿ√¢
+        cv::dilate(binary_image, bg, cv::Mat(), cv::Point(-1,-1), 40); //ÌåΩÏ∞Ω
 
         cv::threshold(bg, bg, 1, 128, cv::THRESH_BINARY_INV);
 
-        //(1∫∏¥Ÿ¿€¿∫)πË∞Ê¿ª128, (1∫∏¥Ÿ≈´)∞¥√º0. Thresholdº≥¡§INVERSE ¿˚øÎ.
+        //(1Î≥¥Îã§ÏûëÏùÄ)Î∞∞Í≤ΩÏùÑ128, (1Î≥¥Îã§ÌÅ∞)Í∞ùÏ≤¥0. ThresholdÏÑ§Ï†ïINVERSE Ï†ÅÏö©.
 
         cv::imshow("Background", bg);
 
@@ -187,23 +187,23 @@ int main(){
 
         cv::Mat markers(binary_image.size(), CV_8U, cv::Scalar(0));
 
-        markers = fg + bg; //ƒßΩƒ+∆ÿ√¢= ∏∂ƒøøµªÛ¿∏∑Œ¡∂«’. øˆ≈ÕΩ¶µÂæÀ∞Ì∏Æ¡Úø° ¿‘∑¬¿∏∑Œ ªÁøÎµ .
+        markers = fg + bg; //Ïπ®Ïãù+ÌåΩÏ∞Ω= ÎßàÏª§ÏòÅÏÉÅÏúºÎ°úÏ°∞Ìï©. ÏõåÌÑ∞ÏâêÎìúÏïåÍ≥†Î¶¨Ï¶òÏóê ÏûÖÎ†•ÏúºÎ°ú ÏÇ¨Ïö©Îê®.
 
         cv::imshow("Marker", markers);
 
 
 
-        WatershedSegmenter segmenter; //øˆ≈ÕΩ¶µÂ∫–«“∞¥√ºª˝º∫
+        WatershedSegmenter segmenter; //ÏõåÌÑ∞ÏâêÎìúÎ∂ÑÌï†Í∞ùÏ≤¥ÏÉùÏÑ±
 
-        segmenter.setMarkers(markers); //set∏∂ƒø«œ∏Èsigned ¿ÃπÃ¡ˆ∑ŒπŸ≤Ò
+        segmenter.setMarkers(markers); //setÎßàÏª§ÌïòÎ©¥signed Ïù¥ÎØ∏ÏßÄÎ°úÎ∞îÎÄú
 
-        segmenter.process(frame); //0,128,255∑Œ±∏º∫µ 
+        segmenter.process(frame); //0,128,255Î°úÍµ¨ÏÑ±Îê®
 
         cv::imshow("Segmentation", segmenter.getSegmentation());
 
 
 
-        cv::imshow("Watershed", segmenter.getWatersheds()); // 0,255∑Œ±∏º∫µ 
+        cv::imshow("Watershed", segmenter.getWatersheds()); // 0,255Î°úÍµ¨ÏÑ±Îê®
 
 
 
@@ -349,7 +349,7 @@ Mat GetSkin(Mat const &src) {
 IplImage* g_image=NULL;
 IplImage* g_gray=NULL;
 IplImage* g_binary=NULL;
-int g_thresh=30; //contour bar √ ±‚∞™
+int g_thresh=30; //contour bar Ï¥àÍ∏∞Í∞í
 CvMemStorage* g_storage=NULL;
 
 
@@ -364,30 +364,30 @@ void on_trackbar(int pos) {
         }
         CvSeq* contours=0;
 
-        //g_imageøµªÛ¿ª BRGªˆ∞¯∞£¿ª ±◊∑π¿Ã Ω∫ƒ…¿œ∑Œ ∫Ø»Ø(BGR to Gray = BGR2GRAY)
+        //g_imageÏòÅÏÉÅÏùÑ BRGÏÉâÍ≥µÍ∞ÑÏùÑ Í∑∏Î†àÏù¥ Ïä§ÏºÄÏùºÎ°ú Î≥ÄÌôò(BGR to Gray = BGR2GRAY)
         cvCvtColor(g_image, g_gray, CV_BGR2GRAY);
-        //¿”∞Ë∞™ ¿Ã«œ:0, ¿”∞Ë∞™√ ∞˙∞™:1 º≥¡§
+        //ÏûÑÍ≥ÑÍ∞í Ïù¥Ìïò:0, ÏûÑÍ≥ÑÍ∞íÏ¥àÍ≥ºÍ∞í:1 ÏÑ§Ï†ï
         cvThreshold(g_gray, g_gray, g_thresh, 255, CV_THRESH_BINARY);
         cvCopy(g_gray, g_binary);
-        //¿±∞˚º± √£±‚
+        //Ïú§Í≥ΩÏÑ† Ï∞æÍ∏∞
         cvFindContours(
-               g_gray,                //¿‘∑¬øµªÛ
-               g_storage,             //∞À√‚µ» ø‹∞˚º±¿ª ±‚∑œ«œ±‚ ¿ß«— ∏ﬁ∏∏Æ Ω∫≈‰∏Æ¡ˆ
-               &contours,             //ø‹∞˚º±¿« ¡¬«•µÈ¿Ã ¿˙¿Âµ» Sequence
+               g_gray,                //ÏûÖÎ†•ÏòÅÏÉÅ
+               g_storage,             //Í≤ÄÏ∂úÎêú Ïô∏Í≥ΩÏÑ†ÏùÑ Í∏∞Î°ùÌïòÍ∏∞ ÏúÑÌïú Î©îÎ™®Î¶¨ Ïä§ÌÜ†Î¶¨ÏßÄ
+               &contours,             //Ïô∏Í≥ΩÏÑ†Ïùò Ï¢åÌëúÎì§Ïù¥ Ï†ÄÏû•Îêú Sequence
                sizeof(CvContour),
-               CV_RETR_TREE           //æÓ∂≤¡æ∑˘¿« ø‹∞˚º± √£¿ª¡ˆ, æÓ∂ª∞‘ ∫∏ø©¡Ÿ¡ˆø° ¥Î«—¡§∫∏
+               CV_RETR_TREE           //Ïñ¥Îñ§Ï¢ÖÎ•òÏùò Ïô∏Í≥ΩÏÑ† Ï∞æÏùÑÏßÄ, Ïñ¥ÎñªÍ≤å Î≥¥Ïó¨Ï§ÑÏßÄÏóê ÎåÄÌïúÏ†ïÎ≥¥
         );
 
         cvZero(g_gray);
 
         if(contours) {
-               //ø‹∞˚º±¿ª √£¿∫ ¡§∫∏(contour)∏¶ ¿ÃøÎ«œø© ø‹∞˚º±¿ª ±◊∏≤
+               //Ïô∏Í≥ΩÏÑ†ÏùÑ Ï∞æÏùÄ Ï†ïÎ≥¥(contour)Î•º Ïù¥Ïö©ÌïòÏó¨ Ïô∏Í≥ΩÏÑ†ÏùÑ Í∑∏Î¶º
                cvDrawContours(
-                       g_gray,                //ø‹∞˚º±¿Ã ±◊∑¡¡˙ øµªÛ
-                       contours,              //ø‹∞˚º± ∆Æ∏Æ¿« ∑Á∆Æ≥ÎµÂ
-                       cvScalarAll(255),      //ø‹∫Œ ø‹∞˚º±¿« ªˆªÛ
-                       cvScalarAll(128),      //≥ª∫Œ ø‹∞˚º±¿« ªˆªÛ
-                       100                    //ø‹∞˚º±¿ª ±◊∏±∂ß ¿Ãµø«“ ±Ì¿Ã
+                       g_gray,                //Ïô∏Í≥ΩÏÑ†Ïù¥ Í∑∏Î†§Ïßà ÏòÅÏÉÅ
+                       contours,              //Ïô∏Í≥ΩÏÑ† Ìä∏Î¶¨Ïùò Î£®Ìä∏ÎÖ∏Îìú
+                       cvScalarAll(255),      //Ïô∏Î∂Ä Ïô∏Í≥ΩÏÑ†Ïùò ÏÉâÏÉÅ
+                       cvScalarAll(128),      //ÎÇ¥Î∂Ä Ïô∏Í≥ΩÏÑ†Ïùò ÏÉâÏÉÅ
+                       100                    //Ïô∏Í≥ΩÏÑ†ÏùÑ Í∑∏Î¶¥Îïå Ïù¥ÎèôÌï† ÍπäÏù¥
                );
         }
 
@@ -441,7 +441,8 @@ using std::cout;
 using std::endl;
 
 bool R1(int R, int G, int B) {
-    bool e1 = (R>95) && (G>40) && (B>20) && ((max(R,max(G,B)) - min(R, min(G,B)))>15) && (abs(R-G)>15) && (R>G) && (R>B);
+	//e1 Í∞í : ÎÖ∏ÎûÄÏÉâ minÍ∞íÏùÑ ÎÜíÏûÑ
+    bool e1 = (R>130) && (G>130) && (B>20) && ((max(R,max(G,B)) - min(R, min(G,B)))>15) && (abs(R-G)>15) && (R>G) && (R>B);
     bool e2 = (R>220) && (G>210) && (B>170) && (abs(R-G)<=15) && (R>B) && (G>B);
     return (e1||e2);
 }
@@ -543,13 +544,13 @@ int main()
 			}
 		}
 
-		drawContours(image, contours, largestContour, Scalar(0, 255, 255), 1, 8, std::vector <Vec4i>(), 0, Point());	//YELLOW contour ±◊∏Æ±‚
+		drawContours(image, contours, largestContour, Scalar(0, 255, 255), 1, 8, std::vector <Vec4i>(), 0, Point());	//YELLOW contour Í∑∏Î¶¨Í∏∞
 
 		if (!contours.empty()) {
 			std::vector<std::vector<Point> >hull(1);
 
 			convexHull(Mat(contours[largestContour]), hull[0], false);
-			drawContours(image, hull, 0, Scalar(0, 255, 0), 1, 8, std::vector<Vec4i>(), 0, Point());		//GREEN ¡° ¿’±‚
+			drawContours(image, hull, 0, Scalar(0, 255, 0), 1, 8, std::vector<Vec4i>(), 0, Point());		//GREEN Ï†ê ÏûáÍ∏∞
 		}
 
 		imshow("hand1_image", tmpImg);
