@@ -107,7 +107,7 @@ class WatershedSegmenter{
 
   void setMarkers(const cv::Mat& markerImage) {
 
-    markerImage.convertTo(markers, CV_32S); //32비트마커스로자료형변환
+    markerImage.convertTo(markers, CV_32S); //32비트마커?�로?�료?��???
 
   }
 
@@ -115,7 +115,7 @@ class WatershedSegmenter{
 
     cv::watershed(image, markers);
 
-    //분할결과를markers에저장
+    //분할결과를markers?��???
 
     return markers;
 
@@ -150,18 +150,18 @@ int main(){
         capture.read(frame);
 
         cv::Mat image = cv::imread("hand.jpg");
-        cv::imshow("Original Image", frame); //원본
+        cv::imshow("Original Image", frame); //?�본
         cv::Mat gray_image;
 
         cv::cvtColor(frame,gray_image,CV_BGR2GRAY);
 
-        cv::imshow("Gray Image", gray_image); //gray영상
+        cv::imshow("Gray Image", gray_image); //gray?�상
 
         cv::Mat binary_image;
 
         cv::threshold(gray_image,binary_image,90,255, cv::THRESH_BINARY_INV);
 
-        cv::imshow("Binary Image", binary_image); //이진영상으로변환(손하얗게끔inverse)
+        cv::imshow("Binary Image", binary_image); //?�진?�상?�로변???�하?�게?�inverse)
 
 
 
@@ -175,11 +175,11 @@ int main(){
 
         cv::Mat bg;
 
-        cv::dilate(binary_image, bg, cv::Mat(), cv::Point(-1,-1), 40); //팽창
+        cv::dilate(binary_image, bg, cv::Mat(), cv::Point(-1,-1), 40); //?�창
 
         cv::threshold(bg, bg, 1, 128, cv::THRESH_BINARY_INV);
 
-        //(1보다작은)배경을128, (1보다큰)객체0. Threshold설정INVERSE 적용.
+        //(1보다?��?)배경??28, (1보다??객체0. Threshold?�정INVERSE ?�용.
 
         cv::imshow("Background", bg);
 
@@ -187,23 +187,23 @@ int main(){
 
         cv::Mat markers(binary_image.size(), CV_8U, cv::Scalar(0));
 
-        markers = fg + bg; //침식+팽창= 마커영상으로조합. 워터쉐드알고리즘에 입력으로 사용됨.
+        markers = fg + bg; //침식+?�창= 마커?�상?�로조합. ?�터?�드?�고리즘???�력?�로 ?�용??
 
         cv::imshow("Marker", markers);
 
 
 
-        WatershedSegmenter segmenter; //워터쉐드분할객체생성
+        WatershedSegmenter segmenter; //?�터?�드분할객체?�성
 
-        segmenter.setMarkers(markers); //set마커하면signed 이미지로바뀜
+        segmenter.setMarkers(markers); //set마커?�면signed ?��?지로바??
 
-        segmenter.process(frame); //0,128,255로구성됨
+        segmenter.process(frame); //0,128,255로구?�됨
 
         cv::imshow("Segmentation", segmenter.getSegmentation());
 
 
 
-        cv::imshow("Watershed", segmenter.getWatersheds()); // 0,255로구성됨
+        cv::imshow("Watershed", segmenter.getWatersheds()); // 0,255로구?�됨
 
 
 
@@ -349,7 +349,7 @@ Mat GetSkin(Mat const &src) {
 IplImage* g_image=NULL;
 IplImage* g_gray=NULL;
 IplImage* g_binary=NULL;
-int g_thresh=30; //contour bar 초기값
+int g_thresh=30; //contour bar 초기�?
 CvMemStorage* g_storage=NULL;
 
 
@@ -364,30 +364,30 @@ void on_trackbar(int pos) {
         }
         CvSeq* contours=0;
 
-        //g_image영상을 BRG색공간을 그레이 스케일로 변환(BGR to Gray = BGR2GRAY)
+        //g_image?�상??BRG?�공간을 그레???��??�로 변??BGR to Gray = BGR2GRAY)
         cvCvtColor(g_image, g_gray, CV_BGR2GRAY);
-        //임계값 이하:0, 임계값초과값:1 설정
+        //?�계�??�하:0, ?�계값초과값:1 ?�정
         cvThreshold(g_gray, g_gray, g_thresh, 255, CV_THRESH_BINARY);
         cvCopy(g_gray, g_binary);
-        //윤곽선 찾기
+        //?�곽??찾기
         cvFindContours(
-               g_gray,                //입력영상
-               g_storage,             //검출된 외곽선을 기록하기 위한 메모리 스토리지
-               &contours,             //외곽선의 좌표들이 저장된 Sequence
+               g_gray,                //?�력?�상
+               g_storage,             //검출된 ?�곽?�을 기록?�기 ?�한 메모�??�토리�?
+               &contours,             //?�곽?�의 좌표?�이 ?�?�된 Sequence
                sizeof(CvContour),
-               CV_RETR_TREE           //어떤종류의 외곽선 찾을지, 어떻게 보여줄지에 대한정보
+               CV_RETR_TREE           //?�떤종류???�곽??찾을지, ?�떻�?보여줄�????�?�정�?
         );
 
         cvZero(g_gray);
 
         if(contours) {
-               //외곽선을 찾은 정보(contour)를 이용하여 외곽선을 그림
+               //?�곽?�을 찾�? ?�보(contour)�??�용?�여 ?�곽?�을 그림
                cvDrawContours(
-                       g_gray,                //외곽선이 그려질 영상
-                       contours,              //외곽선 트리의 루트노드
-                       cvScalarAll(255),      //외부 외곽선의 색상
-                       cvScalarAll(128),      //내부 외곽선의 색상
-                       100                    //외곽선을 그릴때 이동할 깊이
+                       g_gray,                //?�곽?�이 그려�??�상
+                       contours,              //?�곽???�리??루트?�드
+                       cvScalarAll(255),      //?��? ?�곽?�의 ?�상
+                       cvScalarAll(128),      //?��? ?�곽?�의 ?�상
+                       100                    //?�곽?�을 그릴???�동??깊이
                );
         }
 
@@ -441,7 +441,7 @@ using std::cout;
 using std::endl;
 
 bool R1(int R, int G, int B) {
-	//e1 값 : 노란색 min값을 높임
+	//e1 �?: ?��???min값을 ?�임
     bool e1 = (R>130) && (G>130) && (B>20) && ((max(R,max(G,B)) - min(R, min(G,B)))>15) && (abs(R-G)>15) && (R>G) && (R>B);
     bool e2 = (R>220) && (G>210) && (B>170) && (abs(R-G)<=15) && (R>B) && (G>B);
     return (e1||e2);
@@ -545,7 +545,7 @@ int main()
 			}
 		}
 
-		drawContours(image, contours, largestContour, Scalar(0, 255, 255), 1, 8, std::vector <Vec4i>(), 0, Point());	//YELLOW contour 그리기
+		drawContours(image, contours, largestContour, Scalar(0, 255, 255), 1, 8, std::vector <Vec4i>(), 0, Point());	//YELLOW contour 그리�?
 
 
 
@@ -576,7 +576,7 @@ int main()
 			std::vector<std::vector<Point> >hull(1);
 
 			convexHull(Mat(contours[largestContour]), hull[0], false);
-			drawContours(image, hull, 0, Scalar(0, 255, 0), 1, 8, std::vector<Vec4i>(), 0, Point());		//GREEN 점 잇기
+			drawContours(image, hull, 0, Scalar(0, 255, 0), 1, 8, std::vector<Vec4i>(), 0, Point());		//GREEN ???�기
 		}
 		*/
 
