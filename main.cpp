@@ -218,7 +218,7 @@ int main(){
 */
 
 
-
+/*
 ////////HSV color model SKIN DETECTION
 
 using namespace cv;
@@ -262,4 +262,169 @@ int main () {
 	}
 }
 
+*/
 
+////////RGB-H-CbCr color model SKIN DETECTION & FINGER CONTOUR
+
+using namespace cv;
+
+using std::cout;
+using std::endl;
+
+bool R1(int R, int G, int B) {
+    bool e1 = (R>95) && (G>40) && (B>20) && ((max(R,max(G,B)) - min(R, min(G,B)))>15) && (abs(R-G)>15) && (R>G) && (R>B);
+    bool e2 = (R>220) && (G>210) && (B>170) && (abs(R-G)<=15) && (R>B) && (G>B);
+    return (e1||e2);
+}
+
+bool R2(float Y, float Cr, float Cb) {
+    bool e3 = Cr <= 1.5862*Cb+20;
+    bool e4 = Cr >= 0.3448*Cb+76.2069;
+    bool e5 = Cr >= -4.5652*Cb+234.5652;
+    bool e6 = Cr <= -1.15*Cb+301.75;
+    bool e7 = Cr <= -2.2857*Cb+432.85;
+    return e3 && e4 && e5 && e6 && e7;
+}
+
+bool R3(float H, float S, float V) {
+    return (H<25) || (H > 230);
+}
+
+Mat GetSkin(Mat const &src) {
+    // allocate the result matrix
+    Mat dst = src.clone();
+
+    Vec3b cwhite = Vec3b::all(255);
+    Vec3b cblack = Vec3b::all(0);
+
+    Mat src_ycrcb, src_hsv;
+    // OpenCV scales the YCrCb components, so that they
+    // cover the whole value range of [0,255], so there's
+    // no need to scale the values:
+    cvtColor(src, src_ycrcb, CV_BGR2YCrCb);
+    // OpenCV scales the Hue Channel to [0,180] for
+    // 8bit images, so make sure we are operating on
+    // the full spectrum from [0,360] by using floating
+    // point precision:
+    src.convertTo(src_hsv, CV_32FC3);
+    cvtColor(src_hsv, src_hsv, CV_BGR2HSV);
+    // Now scale the values between [0,255]:
+    normalize(src_hsv, src_hsv, 0.0, 255.0, NORM_MINMAX, CV_32FC3);
+
+    for(int i = 0; i < src.rows; i++) {
+        for(int j = 0; j < src.cols; j++) {
+
+            Vec3b pix_bgr = src.ptr<Vec3b>(i)[j];
+            int B = pix_bgr.val[0];
+            int G = pix_bgr.val[1];
+            int R = pix_bgr.val[2];
+            // apply rgb rule
+            bool a = R1(R,G,B);
+
+            Vec3b pix_ycrcb = src_ycrcb.ptr<Vec3b>(i)[j];
+            int Y = pix_ycrcb.val[0];
+            int Cr = pix_ycrcb.val[1];
+            int Cb = pix_ycrcb.val[2];
+            // apply ycrcb rule
+            bool b = R2(Y,Cr,Cb);
+
+            Vec3f pix_hsv = src_hsv.ptr<Vec3f>(i)[j];
+            float H = pix_hsv.val[0];
+            float S = pix_hsv.val[1];
+            float V = pix_hsv.val[2];
+            // apply hsv rule
+            bool c = R3(H,S,V);
+
+            if(!(a&&b&&c))
+                dst.ptr<Vec3b>(i)[j] = cblack;
+        }
+    }
+    return dst;
+}
+
+
+
+IplImage* g_image=NULL;
+IplImage* g_gray=NULL;
+IplImage* g_binary=NULL;
+int g_thresh=30; //contour bar 초기값
+CvMemStorage* g_storage=NULL;
+
+
+//
+void on_trackbar(int pos) {
+        if(g_storage==NULL) {
+               g_gray=cvCreateImage(cvGetSize(g_image), 8, 1);
+               g_binary=cvCreateImage(cvGetSize(g_image), 8, 1);
+               g_storage=cvCreateMemStorage(0);
+        } else {
+               cvClearMemStorage(g_storage);
+        }
+        CvSeq* contours=0;
+
+        //g_image영상을 BRG색공간을 그레이 스케일로 변환(BGR to Gray = BGR2GRAY)
+        cvCvtColor(g_image, g_gray, CV_BGR2GRAY);
+        //임계값 이하:0, 임계값초과값:1 설정
+        cvThreshold(g_gray, g_gray, g_thresh, 255, CV_THRESH_BINARY);
+        cvCopy(g_gray, g_binary);
+        //윤곽선 찾기
+        cvFindContours(
+               g_gray,                //입력영상
+               g_storage,             //검출된 외곽선을 기록하기 위한 메모리 스토리지
+               &contours,             //외곽선의 좌표들이 저장된 Sequence
+               sizeof(CvContour),
+               CV_RETR_TREE           //어떤종류의 외곽선 찾을지, 어떻게 보여줄지에 대한정보
+        );
+
+        cvZero(g_gray);
+
+        if(contours) {
+               //외곽선을 찾은 정보(contour)를 이용하여 외곽선을 그림
+               cvDrawContours(
+                       g_gray,                //외곽선이 그려질 영상
+                       contours,              //외곽선 트리의 루트노드
+                       cvScalarAll(255),      //외부 외곽선의 색상
+                       cvScalarAll(128),      //내부 외곽선의 색상
+                       100                    //외곽선을 그릴때 이동할 깊이
+               );
+        }
+
+        cvShowImage("Binary", g_binary);
+        cvShowImage("Contours", g_gray);
+}
+//
+
+
+int main(int argc, const char *argv[]) {
+    VideoCapture capture("dl003.h264");
+    //VideoCapture capture("C:/Users/macbook/Desktop/record/dr002.h264");
+    Mat image;
+    Mat skin;
+    //
+    IplImage temp;
+    //
+
+    while(1){
+        capture.read(image);
+        skin = GetSkin(image);
+
+        //
+        temp = skin;
+        g_image = &temp;
+        cvCreateTrackbar("Threshold", "Contours", &g_thresh, 255, on_trackbar);
+        on_trackbar(0);
+        //
+
+        namedWindow("original");
+        namedWindow("skin");
+        imshow("original",image);
+        imshow("skin",skin);
+
+        if(cvWaitKey(10)>0)
+            break;
+    }
+    cvDestroyAllWindows();
+    capture.release();
+
+    return 0;
+}
