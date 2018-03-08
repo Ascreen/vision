@@ -521,8 +521,9 @@ int main()
 	std::vector<Vec4i> hierarchy;
 
     //VideoCapture video("C:/Users/macbook/Desktop/record/dr005.h264"); //dl005 dr002
-	VideoCapture video("dl005.h264");
+	VideoCapture video("dl003.h264");
     Mat image;
+
 
     namedWindow("hand1_image", CV_WINDOW_AUTOSIZE);
 	namedWindow("hand2_image", CV_WINDOW_AUTOSIZE);
@@ -560,14 +561,11 @@ int main()
 
 
 
-
-
-
-/*
-
             // loop through the contours/hierarchy
             for (int i=0; i<contours.size(); i++) {
-                if (hierarchy[i][3]==-1 && arcLength(contours[i], true)!=arcLength(contours[i], false)) {
+                if(i==largestContour){  //선택된 윤곽선만 blue 사각형 그리기
+
+                     if (hierarchy[i][3]==-1 && arcLength(contours[i], true)!=arcLength(contours[i], false)) {
                     std::vector<std::vector<Point> >hull(1);
                     convexHull(Mat(contours[i]), hull[0], false);
                     drawContours(image, hull, 0, Scalar(0, 255, 0), 1, 8, std::vector<Vec4i>(), 0, Point());		//GREEN 점 잇기
@@ -578,12 +576,19 @@ int main()
                         minRect[i].points( rect_points );
                         for( int j = 0; j < 4; j++ )
                             line( image, rect_points[j], rect_points[(j+1)%4], Scalar(255, 0, 0), 1, 8 );   //BLUE 사각형 그리기
+                            std::cout<<rect_points[3]<<std::endl;          //point 좌표 값 print하기
+
                     }
                 }
+
+
+                }
+
+
             }
 
 
-*/
+
 
 		/*
 		if (!contours.empty()) {

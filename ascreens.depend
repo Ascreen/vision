@@ -14,7 +14,7 @@
 	"opencv2/imgproc/imgproc_c.h"
 	"opencv2/opencv.hpp"
 
-1520524629 source:c:\users\ksy\desktop\vision\main.cpp
+1520529981 source:c:\users\ksy\desktop\vision\main.cpp
 	"opencv2/highgui/highgui.hpp"
 	"opencv/cv.h"
 	<iostream>
