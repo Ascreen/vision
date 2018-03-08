@@ -555,7 +555,7 @@ int main()
 
 
 		drawContours(image, contours, largestContour, Scalar(0, 255, 255), -1, 8, std::vector <Vec4i>(), 0, Point());	//YELLOW contour 洹몃━湲?
- //다섯번째인자를 -1로하게되면 현재 contour변수에 있는 외곽선만 draw한다고 함
+ //5th index must be -1 for drawing only one contour from present Contours variable)
 
 
 
