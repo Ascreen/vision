@@ -16,6 +16,8 @@
 #include "opencv2/imgproc/imgproc_c.h"
 
 #include "opencv2/opencv.hpp"
+#include <cstring>
+
 
 /*
 ////////mulmi test code
@@ -518,13 +520,14 @@ int main()
 	std::vector<std::vector<Point> > contours;
 	std::vector<Vec4i> hierarchy;
 
-    VideoCapture video("C:/Users/macbook/Desktop/record/dr005.h264"); //dl005 dr002
-	//VideoCapture video("dl003.h264");
+    //VideoCapture video("C:/Users/macbook/Desktop/record/dr005.h264"); //dl005 dr002
+	VideoCapture video("dl003.h264");
     Mat image;
 
     namedWindow("hand1_image", CV_WINDOW_AUTOSIZE);
 	namedWindow("hand2_image", CV_WINDOW_AUTOSIZE);
 	namedWindow("original_image", CV_WINDOW_AUTOSIZE);
+
 
 	while (true)
 	{
@@ -540,16 +543,27 @@ int main()
 
 		int largestContour = 0;
 		for (int i = 0; i < contours.size(); i++) {
+
+
+            //double a = contourArea(contours[i]);
 			if (contourArea(contours[i]) > contourArea(contours[largestContour])) {
 				largestContour = i;
+
 			}
+
 		}
 
-		drawContours(image, contours, largestContour, Scalar(0, 255, 255), 1, 8, std::vector <Vec4i>(), 0, Point());	//YELLOW contour ê·¸ë¦¬ê¸?
+
+		drawContours(image, contours, largestContour, Scalar(0, 255, 255), -1, 8, std::vector <Vec4i>(), 0, Point());	//YELLOW contour ê·¸ë¦¬ê¸?
+ //´Ù¼¸¹øÂ°ÀÎÀÚ¸¦ -1·ÎÇÏ°ÔµÇ¸é ÇöÀç contourº¯¼ö¿¡ ÀÖ´Â ¿Ü°û¼±¸¸ drawÇÑ´Ù°í ÇÔ
 
 
 
 
+
+
+
+/*
 
             // loop through the contours/hierarchy
             for (int i=0; i<contours.size(); i++) {
@@ -569,7 +583,7 @@ int main()
             }
 
 
-
+*/
 
 		/*
 		if (!contours.empty()) {
