@@ -514,15 +514,48 @@ Mat GetSkin(Mat const &src) {
 }
 
 
+
+int comparePoints(vector<Point2f> points){  //6frames 단위  +-3.5 오차범위
+    vector<Point2f> differ;
+    if(points.size()==6){
+        for(int i=0; i<5; i++){
+            differ.push_back(Point2f(fabs(points[i+1].x-points[i].x),fabs(points[i+1].y-points[i].y)));
+        }
+
+        float differX=0.0, differY=0.0;
+        for(int i=0; i<5; i++){
+            differX += differ[i].x;
+            differY += differ[i].y;
+        }
+        differX = differX/5;
+        differY = differY/5;
+
+        if(0.0<=differX && differX<3.5){
+            if(0.0<=differY && differY<=3.5){
+                std::cout<<"***********"<<std::endl;
+                std::cout<<points[2]<<std::endl;
+                std::cout<<"***********"<<std::endl;
+            }
+        }
+        differ.clear();
+        return 1;
+    } else
+        return 0;
+}
+
+
+
 int main()
 {
 	Mat tmpImg, handImg, mask;
 	std::vector<std::vector<Point> > contours;
 	std::vector<Vec4i> hierarchy;
+	vector<Point2f> points;
 
-    //VideoCapture video("C:/Users/macbook/Desktop/record/dr005.h264"); //dl005 dr002
-	VideoCapture video("dl003.h264");
+    VideoCapture video("C:/Users/macbook/Desktop/record/dr005.h264"); //dl005 dr002error dr005
+	//VideoCapture video("dl003.h264");
     Mat image;
+
 
 
     namedWindow("hand1_image", CV_WINDOW_AUTOSIZE);
@@ -569,6 +602,10 @@ int main()
                         for( int j = 0; j < 4; j++ )
                             line( image, rect_points[j], rect_points[(j+1)%4], Scalar(255, 0, 0), 1, 8 );   //BLUE 사각형 그리기
                         std::cout<<rect_points[3]<<std::endl;          //point 좌표 값 print하기
+
+                        points.push_back(Point2f(rect_points[3].x,rect_points[3].y));
+                        if(comparePoints(points))
+                            points.clear();
                     }
                 }
             }
