@@ -514,24 +514,25 @@ Mat GetSkin(Mat const &src) {
 }
 
 
-
-int comparePoints(vector<Point2f> points){  //6frames 단위  +-3.5 오차범위
+Point2f clickPoint = Point2f(0.0,0.0); //BLUE circle point
+int comparePoints(vector<Point2f> points){  //5frames 단위  +-3.3 오차범위
     vector<Point2f> differ;
-    if(points.size()==6){
-        for(int i=0; i<5; i++){
+    if(points.size()==5){
+        for(int i=0; i<4; i++){
             differ.push_back(Point2f(fabs(points[i+1].x-points[i].x),fabs(points[i+1].y-points[i].y)));
         }
 
         float differX=0.0, differY=0.0;
-        for(int i=0; i<5; i++){
+        for(int i=0; i<4; i++){
             differX += differ[i].x;
             differY += differ[i].y;
         }
-        differX = differX/5;
-        differY = differY/5;
+        differX = differX/4;
+        differY = differY/4;
 
-        if(0.0<=differX && differX<3.5){
-            if(0.0<=differY && differY<=3.5){
+        if(0.0<=differX && differX<3.3){
+            if(0.0<=differY && differY<=3.3){
+                clickPoint = points[2];
                 std::cout<<"***********"<<std::endl;
                 std::cout<<points[2]<<std::endl;
                 std::cout<<"***********"<<std::endl;
@@ -552,8 +553,8 @@ int main()
 	std::vector<Vec4i> hierarchy;
 	vector<Point2f> points;
 
-    VideoCapture video("C:/Users/macbook/Desktop/record/dr005.h264"); //dl005 dr002error dr005
-	//VideoCapture video("dl003.h264");
+    //VideoCapture video("C:/Users/macbook/Desktop/record/dr005.h264"); //dl005 dr002bigerror dr005error 사각형 사이즈 범위를 정하는게 좋을듯
+	VideoCapture video("dl003.h264");
     Mat image;
 
 
@@ -601,11 +602,16 @@ int main()
                         minRect[i].points( rect_points );
                         for( int j = 0; j < 4; j++ )
                             line( image, rect_points[j], rect_points[(j+1)%4], Scalar(255, 0, 0), 1, 8 );   //BLUE 사각형 그리기
-                        std::cout<<rect_points[3]<<std::endl;          //point 좌표 값 print하기
+                        std::cout<<rect_points[2]<<std::endl;          //point 좌표 값 print하기
 
-                        points.push_back(Point2f(rect_points[3].x,rect_points[3].y));
-                        if(comparePoints(points))
+                        points.push_back(Point2f(rect_points[2].x,rect_points[2].y));
+                        if(comparePoints(points)){
+                            if(clickPoint.x!=0.0 && clickPoint.y!=0.0){
+                                circle(image, clickPoint, 10, Scalar(255, 0, 0), 10); //BLUE circle
+                                clickPoint = Point2f(0.0,0.0);
+                            }
                             points.clear();
+                        }
                     }
                 }
             }
