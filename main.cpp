@@ -544,28 +544,20 @@ int main()
 
 		int largestContour = 0;
 		for (int i = 0; i < contours.size(); i++) {
-
-
             //double a = contourArea(contours[i]);
 			if (contourArea(contours[i]) > contourArea(contours[largestContour])) {
 				largestContour = i;
-
 			}
-
 		}
 
-
 		drawContours(image, contours, largestContour, Scalar(0, 255, 255), -1, 8, std::vector <Vec4i>(), 0, Point());	//YELLOW contour ê·¸ë¦¬ê¸?
- //5th index must be -1 for drawing only one contour from present Contours variable)
+        //5th index must be -1 for drawing only one contour from present Contours variable)
 
 
-
-
-            // loop through the contours/hierarchy
-            for (int i=0; i<contours.size(); i++) {
-                if(i==largestContour){  //¼±ÅÃµÈ À±°û¼±¸¸ blue »ç°¢Çü ±×¸®±â
-
-                     if (hierarchy[i][3]==-1 && arcLength(contours[i], true)!=arcLength(contours[i], false)) {
+        // loop through the contours/hierarchy
+        for (int i=0; i<contours.size(); i++) {
+            if(i==largestContour){  //¼±ÅÃµÈ À±°û¼±¸¸ blue »ç°¢Çü ±×¸®±â
+                if (hierarchy[i][3]==-1 && arcLength(contours[i], true)!=arcLength(contours[i], false)) {
                     std::vector<std::vector<Point> >hull(1);
                     convexHull(Mat(contours[i]), hull[0], false);
                     drawContours(image, hull, 0, Scalar(0, 255, 0), 1, 8, std::vector<Vec4i>(), 0, Point());		//GREEN Á¡ ÀÕ±â
@@ -576,29 +568,11 @@ int main()
                         minRect[i].points( rect_points );
                         for( int j = 0; j < 4; j++ )
                             line( image, rect_points[j], rect_points[(j+1)%4], Scalar(255, 0, 0), 1, 8 );   //BLUE »ç°¢Çü ±×¸®±â
-                            std::cout<<rect_points[3]<<std::endl;          //point ÁÂÇ¥ °ª printÇÏ±â
-
+                        std::cout<<rect_points[3]<<std::endl;          //point ÁÂÇ¥ °ª printÇÏ±â
                     }
                 }
-
-
-                }
-
-
             }
-
-
-
-
-		/*
-		if (!contours.empty()) {
-			std::vector<std::vector<Point> >hull(1);
-
-			convexHull(Mat(contours[largestContour]), hull[0], false);
-			drawContours(image, hull, 0, Scalar(0, 255, 0), 1, 8, std::vector<Vec4i>(), 0, Point());		//GREEN ???‡ê¸°
-		}
-		*/
-
+        }
 
         //Size(960,540) , Size(800,450) , Size(720,405)
 		resize(image, image, Size(960,540), 0, 0, CV_INTER_LINEAR);
