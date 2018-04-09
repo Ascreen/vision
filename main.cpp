@@ -444,8 +444,15 @@ using std::endl;
 
 bool R1(int R, int G, int B) {
 	//e1 媛?: ?몃???min媛믪쓣 ?믪엫
+	/*
     bool e1 = (R>130) && (G>130) && (B>20) && ((max(R,max(G,B)) - min(R, min(G,B)))>15) && (abs(R-G)>15) && (R>G) && (R>B);
     bool e2 = (R>220) && (G>210) && (B>170) && (abs(R-G)<=15) && (R>B) && (G>B);
+    */
+
+    bool e1 = (R>100) && (G>100) && (B>10) && ((max(R,max(G,B)) - min(R, min(G,B)))>15) && (abs(R-G)>15) && (R>G) && (R>B);
+    bool e2 = (R>220) && (G>210) && (B>170) && (abs(R-G)<=15) && (R>B) && (G>B);
+
+
     return (e1||e2);
 }
 
@@ -553,8 +560,8 @@ int main()
 	std::vector<Vec4i> hierarchy;
 	vector<Point2f> points;
 
-    //VideoCapture video("C:/Users/macbook/Desktop/record/dr005.h264"); //dl005 dr002bigerror dr005error 사각형 사이즈 범위를 정하는게 좋을듯
-	VideoCapture video("dl003.h264");
+    //VideoCapture video("C:/Users/macbook/Desktop/record/test_dl00.h264"); //dl005 dr002bigerror dr005error 사각형 사이즈 범위를 정하는게 좋을듯
+	//VideoCapture video("dl03.h264");
     Mat image;
 
 
