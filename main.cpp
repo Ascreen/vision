@@ -449,7 +449,7 @@ bool R1(int R, int G, int B) {
     bool e2 = (R>220) && (G>210) && (B>170) && (abs(R-G)<=15) && (R>B) && (G>B);
     */
 
-    bool e1 = (R>100) && (G>100) && (B>10) && ((max(R,max(G,B)) - min(R, min(G,B)))>15) && (abs(R-G)>15) && (R>G) && (R>B);
+    bool e1 = (R>80) && (G>80) && (B>10) && ((max(R,max(G,B)) - min(R, min(G,B)))>15) && (abs(R-G)>15) && (R>G) && (R>B);
     bool e2 = (R>220) && (G>210) && (B>170) && (abs(R-G)<=15) && (R>B) && (G>B);
 
 
@@ -522,26 +522,30 @@ Mat GetSkin(Mat const &src) {
 
 
 Point2f clickPoint = Point2f(0.0,0.0); //BLUE circle point
-int comparePoints(vector<Point2f> points){  //5frames 단위  +-3.3 오차범위
+
+int frameUnit=3, frameUnitMid=1;  // 3 frames 단위  +-3.5 오차범위
+float errorRange= 3.5;
+
+int comparePoints(vector<Point2f> points){
     vector<Point2f> differ;
-    if(points.size()==5){
-        for(int i=0; i<4; i++){
+    if(points.size()==frameUnit){
+        for(int i=0; i<(frameUnit-1); i++){
             differ.push_back(Point2f(fabs(points[i+1].x-points[i].x),fabs(points[i+1].y-points[i].y)));
         }
 
         float differX=0.0, differY=0.0;
-        for(int i=0; i<4; i++){
+        for(int i=0; i<(frameUnit-1); i++){
             differX += differ[i].x;
             differY += differ[i].y;
         }
-        differX = differX/4;
-        differY = differY/4;
+        differX = differX/(frameUnit-1);
+        differY = differY/(frameUnit-1);
 
-        if(0.0<=differX && differX<3.3){
-            if(0.0<=differY && differY<=3.3){
-                clickPoint = points[2];
+        if(0.0<=differX && differX<errorRange){
+            if(0.0<=differY && differY<=errorRange){
+                clickPoint = points[frameUnitMid];
                 std::cout<<"***********"<<std::endl;
-                std::cout<<points[2]<<std::endl;
+                std::cout<<points[frameUnitMid]<<std::endl;
                 std::cout<<"***********"<<std::endl;
             }
         }
@@ -560,7 +564,12 @@ int main()
 	std::vector<Vec4i> hierarchy;
 	vector<Point2f> points;
 
-    //VideoCapture video("C:/Users/macbook/Desktop/record/test_dl00.h264"); //dl005 dr002bigerror dr005error 사각형 사이즈 범위를 정하는게 좋을듯
+
+	/*
+	VideoCapture video(0);
+	if (!video.isOpened()) return 0;
+	*/
+    VideoCapture video("C:/Users/macbook/Desktop/record3/new_ul01.h264"); //dl005 dr002bigerror dr005error 사각형 사이즈 범위를 정하는게 좋을듯
 	//VideoCapture video("dl03.h264");
     Mat image;
 
@@ -573,7 +582,12 @@ int main()
 
 	while (true)
 	{
+	    /*
+	    video >> image;
+		if (image.empty()) break;
+		*/
 		video.read(image);
+
         tmpImg = GetSkin(image);
 
 		cvtColor(tmpImg, handImg, CV_BGR2YCrCb);
